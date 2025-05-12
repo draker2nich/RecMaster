@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name">RecMaster</string>
+    <string name="app_started">Загрузка данных...</string>
+    
+    <!-- Navigation -->
+    <string name="title_home">Главная</string>
+    <string name="title_recommendations">Рекомендации</string>
+    <string name="title_profile">Профиль</string>
+    <string name="title_collection">Коллекция</string>
+
+    <!-- Content Card -->
+    <string name="content_image">Изображение контента</string>
+    <string name="tag_example">тег</string>
+    
+    <!-- Moods -->
+    <string name="select_mood">Выберите настроение:</string>
+    <string name="mood_happy">Счастливое</string>
+    <string name="mood_sad">Грустное</string>
+    <string name="mood_excited">Возбужденное</string>
+    <string name="mood_relaxed">Расслабленное</string>
+    
+    <!-- Profile -->
+    <string name="profile_image">Фото профиля</string>
+    <string name="username_placeholder">Имя пользователя</string>
+    <string name="level_placeholder">Уровень %d</string>
+    <string name="achievements">Достижения</string>
+    <string name="achievement_image">Значок достижения</string>
+    
+    <!-- Collection -->
+    <string name="tab_movies">Фильмы</string>
+    <string name="tab_tv_shows">Сериалы</string>
+    <string name="tab_books">Книги</string>
+    <string name="tab_games">Игры</string>
+    
+    <!-- Auth -->
+    <string name="app_logo">Логотип приложения</string>
+    <string name="login">Вход</string>
+    <string name="register">Регистрация</string>
+    <string name="username">Имя пользователя</string>
+    <string name="email">Электронная почта</string>
+    <string name="password">Пароль</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="field_required">Это поле обязательно</string>
+    <string name="passwords_dont_match">Пароли не совпадают</string>
+    <string name="login_error">Неверные данные для входа</string>
+    <string name="register_success">Регистрация успешно завершена</string>
+    <string name="logout">Выход</string>
+    
+    <!-- Profile Edit -->
+    <string name="edit_profile">Редактировать профиль</string>
+    <string name="save">Сохранить</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="level">Уровень</string>
+    <string name="experience">Опыт</string>
+    <string name="preferred_genres">Предпочитаемые жанры</string>
+    <string name="preferred_genres_description">Выберите жанры, которые вам нравятся</string>
+    <string name="select_genres">Выбрать жанры</string>
+    <string name="changes_saved">Изменения сохранены</string>
+    
+    <!-- Movies -->
+    <string name="movie_poster">Постер фильма</string>
+    <string name="popular_movies">Популярные фильмы</string>
+    <string name="top_rated_movies">Фильмы с высоким рейтингом</string>
+    <string name="now_playing_movies">Сейчас в кино</string>
+    <string name="upcoming_movies">Скоро в кино</string>
+    <string name="movie_details">Детали фильма</string>
+    <string name="similar_movies">Похожие фильмы</string>
+    <string name="movie_overview">Описание</string>
+    <string name="movie_release_date">Дата выхода: %s</string>
+    <string name="movie_runtime">Продолжительность: %d мин.</string>
+    <string name="movie_budget">Бюджет: $%s</string>
+    <string name="movie_revenue">Сборы: $%s</string>
+    <string name="movie_genres">Жанры: %s</string>
+    <string name="see_all">Показать все</string>
+    <string name="search_hint">Поиск фильмов…</string>
+    <string name="no_results">Ничего не найдено</string>
+    <string name="error_loading_data">Ошибка загрузки данных</string>
+    <string name="retry">Повторить</string>
+    <string name="no_internet_connection">Отсутствует подключение к интернету. Пожалуйста, проверьте сетевое соединение и попробуйте снова.</string>
+    
+    <!-- Movie Genres -->
+    <string name="genre_action">Боевик</string>
+    <string name="genre_adventure">Приключения</string>
+    <string name="genre_animation">Анимация</string>
+    <string name="genre_comedy">Комедия</string>
+    <string name="genre_crime">Криминал</string>
+    <string name="genre_documentary">Документальный</string>
+    <string name="genre_drama">Драма</string>
+    <string name="genre_family">Семейный</string>
+    <string name="genre_fantasy">Фэнтези</string>
+    <string name="genre_history">Исторический</string>
+    <string name="genre_horror">Ужасы</string>
+    <string name="genre_music">Музыка</string>
+    <string name="genre_mystery">Детектив</string>
+    <string name="genre_romance">Мелодрама</string>
+    <string name="genre_science_fiction">Научная фантастика</string>
+    <string name="genre_tv_movie">ТВ фильм</string>
+    <string name="genre_thriller">Триллер</string>
+    <string name="genre_war">Военный</string>
+    <string name="genre_western">Вестерн</string>
+</resources>
