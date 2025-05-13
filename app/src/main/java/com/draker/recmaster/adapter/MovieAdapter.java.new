@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestOptions;
 import com.draker.recmaster.R;
 import com.draker.recmaster.model.Movie;
@@ -114,15 +115,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Log.d(TAG, "Binding movie: " + movie.getTitle());
             
             textMovieTitle.setText(movie.getTitle());
-            textMovieRating.setText(String.format("%.1f ★", movie.getVoteAverage()));
+            
+            // Проверка и установка оценки
+            float rating = movie.getVoteAverage();
+            Log.d(TAG, "Movie rating: " + rating + " for " + movie.getTitle());
+            textMovieRating.setText(String.format("%.1f ★", rating));
             
             // Используем форматированную дату
             String formattedDate = movie.getFormattedReleaseDate();
+            Log.d(TAG, "Movie release date: " + formattedDate + " for " + movie.getTitle());
             textMovieReleaseDate.setText(formattedDate.isEmpty() ? "Дата не указана" : formattedDate);
 
             // Загрузка изображения с помощью Glide
-            if (movie.getPosterUrl() != null) {
-                Log.d(TAG, "Loading poster: " + movie.getPosterUrl());
+            String posterUrl = movie.getPosterUrl();
+            if (posterUrl != null && !posterUrl.isEmpty()) {
+                Log.d(TAG, "Loading poster: " + posterUrl + " for " + movie.getTitle());
                 
                 RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.ic_movie_placeholder)
@@ -130,11 +137,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 
                 Glide.with(context)
-                        .load(movie.getPosterUrl())
+                        .load(posterUrl)
                         .apply(requestOptions)
+                        .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
+                                Log.e(TAG, "Failed to load image: " + posterUrl + " for " + movie.getTitle(), e);
+                                return false; // позволяем Glide обработать ошибку и отобразить placeholder
+                            }
+
+                            @Override
+                            public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                                Log.d(TAG, "Successfully loaded image: " + posterUrl + " for " + movie.getTitle());
+                                return false; // позволяем Glide отобразить загруженное изображение
+                            }
+                        })
                         .into(imageMoviePoster);
             } else {
-                Log.d(TAG, "No poster URL, using placeholder");
+                Log.d(TAG, "No poster URL, using placeholder for " + movie.getTitle());
                 imageMoviePoster.setImageResource(R.drawable.ic_movie_placeholder);
             }
 

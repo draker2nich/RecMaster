@@ -50,22 +50,29 @@ public class ApiClient {
             );
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // Создаем перехватчик для добавления заголовка авторизации
-            Interceptor authInterceptor = new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request originalRequest = chain.request();
-                    
-                    // Добавляем Bearer токен в заголовок
-                    Request newRequest = originalRequest.newBuilder()
-                            .header("Authorization", "Bearer " + TMDB_ACCESS_TOKEN)
-                            .header("accept", "application/json")
-                            .build();
-                    
-                    Log.d(TAG, "Sending request to TMDB with Authorization header: Bearer " + TMDB_ACCESS_TOKEN);
-                    return chain.proceed(newRequest);
-                }
-            };
+    // Создаем перехватчик для добавления заголовка авторизации
+    Interceptor authInterceptor = new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request originalRequest = chain.request();
+            
+            // Проверка токена
+            if (TMDB_ACCESS_TOKEN == null || TMDB_ACCESS_TOKEN.isEmpty()) {
+                Log.e(TAG, "TMDB_ACCESS_TOKEN is null or empty! Check your BuildConfig");
+            } else {
+                Log.d(TAG, "Using TMDB_ACCESS_TOKEN: " + (TMDB_ACCESS_TOKEN.length() > 4 ? 
+                        TMDB_ACCESS_TOKEN.substring(0, 4) + "..." : TMDB_ACCESS_TOKEN));
+            }
+            
+            // Добавляем Bearer токен в заголовок
+            Request newRequest = originalRequest.newBuilder()
+                    .header("Authorization", "Bearer " + TMDB_ACCESS_TOKEN)
+                    .header("accept", "application/json")
+                    .build();
+            
+            return chain.proceed(newRequest);
+        }
+    };
 
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             httpClient.addInterceptor(loggingInterceptor);

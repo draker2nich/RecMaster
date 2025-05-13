@@ -2,6 +2,8 @@ package com.draker.recmaster.model;
 
 import android.util.Log;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,17 +18,40 @@ import java.util.Map;
 public class Movie implements Serializable {
     private static final String TAG = "Movie";
 
+    @SerializedName("id")
     private int id;
+    
+    @SerializedName("title")
     private String title;
+    
+    @SerializedName("overview")
     private String overview;
+    
+    @SerializedName("poster_path")
     private String posterPath;
+    
+    @SerializedName("backdrop_path")
     private String backdropPath;
+    
+    @SerializedName("vote_average")
     private float voteAverage;
+    
+    @SerializedName("vote_count")
     private int voteCount;
+    
+    @SerializedName("release_date")
     private String releaseDate;
+    
+    @SerializedName("genre_ids")
     private List<Integer> genreIds;
+    
+    @SerializedName("popularity")
     private float popularity;
+    
+    @SerializedName("adult")
     private boolean adult;
+    
+    @SerializedName("runtime")
     private int runtime; // продолжительность фильма в минутах
 
     // Базовый URL для изображений
@@ -65,8 +90,13 @@ public class Movie implements Serializable {
     // Получение полного URL для постера
     public String getPosterUrl() {
         if (posterPath != null && !posterPath.isEmpty()) {
+            // API возвращает posterPath без начального слеша, проверим это
+            if (!posterPath.startsWith("/")) {
+                return POSTER_BASE_URL + "/" + posterPath;
+            }
             return POSTER_BASE_URL + posterPath;
         }
+        Log.d(TAG, "Poster path is null or empty for movie: " + title);
         return null;
     }
 
@@ -115,6 +145,7 @@ public class Movie implements Serializable {
      */
     public String getFormattedReleaseDate() {
         if (releaseDate == null || releaseDate.isEmpty()) {
+            Log.d(TAG, "Release date is null or empty for movie: " + title);
             return "";
         }
         
@@ -126,7 +157,7 @@ public class Movie implements Serializable {
                 return outputFormat.format(date);
             }
         } catch (ParseException e) {
-            Log.e(TAG, "Error parsing date: " + releaseDate, e);
+            Log.e(TAG, "Error parsing date: " + releaseDate + " for movie: " + title, e);
         }
         
         return releaseDate;

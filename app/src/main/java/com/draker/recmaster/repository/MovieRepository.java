@@ -72,6 +72,17 @@ public class MovieRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Got " + movies.size() + " popular movies");
+                    
+                    // Логируем информацию о первом фильме, если список не пустой
+                    if (!movies.isEmpty()) {
+                        Movie firstMovie = movies.get(0);
+                        Log.d(TAG, "First movie: " + firstMovie.getTitle() + 
+                              ", PosterPath: " + firstMovie.getPosterPath() +
+                              ", PosterUrl: " + firstMovie.getPosterUrl() +
+                              ", ReleaseDate: " + firstMovie.getReleaseDate() +
+                              ", VoteAverage: " + firstMovie.getVoteAverage());
+                    }
+                    
                     moviesLiveData.setValue(movies);
                     
                     // Сохраняем полученные фильмы в локальную базу данных
