@@ -20,6 +20,11 @@ android {
         buildConfigField("String", "TMDB_API_KEY", "\"df6cc4ca6799e08fed0d53607376eda7\"")
         buildConfigField("String", "TMDB_ACCESS_TOKEN", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZjZjYzRjYTY3OTllMDhmZWQwZDUzNjA3Mzc2ZWRhNyIsIm5iZiI6MTc0NzA2NzAzMy43MzksInN1YiI6IjY4MjIyMDk5MGUwMGNmMjZmNDZlZTU2OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.4yYForZ_9GRLHerSnmEBfIOz-JlB6C9KgOMnxFHgiyA\"")
         buildConfigField("String", "TMDB_BASE_URL", "\"https://api.themoviedb.org/3/\"")
+        // Google Books API не требует API ключа для большинства запросов
+        buildConfigField("String", "GOOGLE_BOOKS_BASE_URL", "\"https://www.googleapis.com/books/v1/\"")
+        // RAWG Games API 
+        buildConfigField("String", "RAWG_API_KEY", "\"d81d4e0fba794cbe8de9d4dcefd14c5b\"")
+        buildConfigField("String", "RAWG_BASE_URL", "\"https://api.rawg.io/api/\"")
     }
 
     buildTypes {

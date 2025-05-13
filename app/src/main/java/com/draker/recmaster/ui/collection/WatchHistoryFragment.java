@@ -76,8 +76,8 @@ public class WatchHistoryFragment extends Fragment implements WatchHistoryAdapte
             
             // Инициализация ViewModel с передачей Application context
             if (watchHistoryViewModel == null) {
-                watchHistoryViewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())
-                        .create(WatchHistoryViewModel.class);
+                watchHistoryViewModel = new ViewModelProvider(requireActivity())
+                        .get(WatchHistoryViewModel.class);
                 Log.d(TAG, "WatchHistoryViewModel initialized");
                 
                 // Устанавливаем текущего пользователя

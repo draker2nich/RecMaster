@@ -1,8 +1,12 @@
 package com.draker.recmaster.viewmodel;
 
+import android.app.Application;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.draker.recmaster.model.Movie;
 import com.draker.recmaster.repository.MovieRepository;
@@ -13,114 +17,124 @@ import java.util.Map;
 /**
  * ViewModel для работы с данными о фильмах
  */
-public class MovieViewModel extends ViewModel {
+public class MovieViewModel extends AndroidViewModel {
 
-    private final MovieRepository repository;
-    private final MutableLiveData<List<Movie>> popularMovies = new MutableLiveData<>();
-    private final MutableLiveData<List<Movie>> topRatedMovies = new MutableLiveData<>();
-    private final MutableLiveData<List<Movie>> nowPlayingMovies = new MutableLiveData<>();
-    private final MutableLiveData<List<Movie>> upcomingMovies = new MutableLiveData<>();
-    private final MutableLiveData<List<Movie>> searchResults = new MutableLiveData<>();
-    private final MutableLiveData<Movie> movieDetails = new MutableLiveData<>();
-    private final MutableLiveData<Map<Integer, String>> genreMap = new MutableLiveData<>();
-    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private static final String TAG = "MovieViewModel";
 
-    public MovieViewModel() {
-        repository = MovieRepository.getInstance();
+    private final MovieRepository movieRepository;
+    private final MutableLiveData<List<Movie>> popularMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Movie>> topRatedMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Movie>> upcomingMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Movie>> nowPlayingMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Map<Integer, String>> genreMapLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
+
+    public MovieViewModel(@NonNull Application application) {
+        super(application);
+        movieRepository = MovieRepository.getInstance();
+        movieRepository.setLocalRepository(application);
     }
 
-    // Методы для получения LiveData объектов
-    public LiveData<List<Movie>> getPopularMovies() {
-        return popularMovies;
-    }
-
-    public LiveData<List<Movie>> getTopRatedMovies() {
-        return topRatedMovies;
-    }
-
-    public LiveData<List<Movie>> getNowPlayingMovies() {
-        return nowPlayingMovies;
-    }
-
-    public LiveData<List<Movie>> getUpcomingMovies() {
-        return upcomingMovies;
-    }
-
-    public LiveData<List<Movie>> getSearchResults() {
-        return searchResults;
-    }
-
-    public LiveData<Movie> getMovieDetails() {
-        return movieDetails;
-    }
-
-    public LiveData<Map<Integer, String>> getGenreMap() {
-        return genreMap;
-    }
-
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
-    }
-
-    public LiveData<Boolean> isLoading() {
-        return isLoading;
-    }
-
-    // Методы для загрузки данных
+    /**
+     * Загрузка списка популярных фильмов
+     */
     public void loadPopularMovies(int page) {
-        isLoading.setValue(true);
-        repository.getPopularMovies(popularMovies, errorMessage, page);
-        isLoading.setValue(false);
+        isLoadingLiveData.setValue(true);
+        movieRepository.getPopularMovies(popularMoviesLiveData, errorMessageLiveData, page);
+        isLoadingLiveData.setValue(false);
     }
 
+    /**
+     * Загрузка списка фильмов с высоким рейтингом
+     */
     public void loadTopRatedMovies(int page) {
-        isLoading.setValue(true);
-        repository.getTopRatedMovies(topRatedMovies, errorMessage, page);
-        isLoading.setValue(false);
+        isLoadingLiveData.setValue(true);
+        movieRepository.getTopRatedMovies(topRatedMoviesLiveData, errorMessageLiveData, page);
+        isLoadingLiveData.setValue(false);
     }
 
-    public void loadNowPlayingMovies(int page) {
-        isLoading.setValue(true);
-        repository.getNowPlayingMovies(nowPlayingMovies, errorMessage, page);
-        isLoading.setValue(false);
-    }
-
+    /**
+     * Загрузка списка фильмов, которые скоро выйдут
+     */
     public void loadUpcomingMovies(int page) {
-        isLoading.setValue(true);
-        repository.getUpcomingMovies(upcomingMovies, errorMessage, page);
-        isLoading.setValue(false);
+        isLoadingLiveData.setValue(true);
+        movieRepository.getUpcomingMovies(upcomingMoviesLiveData, errorMessageLiveData, page);
+        isLoadingLiveData.setValue(false);
     }
 
-    // Этот метод пока не используется, закомментируем его до тех пор, 
-    // пока не будет реализован экран деталей фильма
-    /*
-    public void loadMovieDetails(int movieId) {
-        isLoading.setValue(true);
-        repository.getMovieDetails(movieId, movieDetails, errorMessage);
-        isLoading.setValue(false);
+    /**
+     * Загрузка списка фильмов, которые сейчас в кино
+     */
+    public void loadNowPlayingMovies(int page) {
+        isLoadingLiveData.setValue(true);
+        movieRepository.getNowPlayingMovies(nowPlayingMoviesLiveData, errorMessageLiveData, page);
+        isLoadingLiveData.setValue(false);
     }
-    */
 
+    /**
+     * Загрузка жанров фильмов
+     */
     public void loadGenres() {
-        repository.getMovieGenres(genreMap, errorMessage);
+        movieRepository.getMovieGenres(genreMapLiveData, errorMessageLiveData);
     }
 
+    /**
+     * Поиск фильмов по запросу
+     */
     public void searchMovies(String query, int page) {
-        if (query != null && !query.trim().isEmpty()) {
-            isLoading.setValue(true);
-            repository.searchMovies(query, searchResults, errorMessage, page);
-            isLoading.setValue(false);
-        } else {
-            searchResults.setValue(null);
-        }
+        isLoadingLiveData.setValue(true);
+        MutableLiveData<List<Movie>> searchResultsLiveData = new MutableLiveData<>();
+        movieRepository.searchMovies(query, searchResultsLiveData, errorMessageLiveData, page);
+        isLoadingLiveData.setValue(false);
     }
 
-    // Метод для преобразования ID жанра в название
-    public String getGenreName(int genreId) {
-        if (genreMap.getValue() != null) {
-            return genreMap.getValue().get(genreId);
-        }
-        return null;
+    /**
+     * Получить LiveData со списком популярных фильмов
+     */
+    public LiveData<List<Movie>> getPopularMovies() {
+        return popularMoviesLiveData;
+    }
+
+    /**
+     * Получить LiveData со списком фильмов с высоким рейтингом
+     */
+    public LiveData<List<Movie>> getTopRatedMovies() {
+        return topRatedMoviesLiveData;
+    }
+
+    /**
+     * Получить LiveData со списком предстоящих фильмов
+     */
+    public LiveData<List<Movie>> getUpcomingMovies() {
+        return upcomingMoviesLiveData;
+    }
+
+    /**
+     * Получить LiveData со списком фильмов, которые сейчас в кино
+     */
+    public LiveData<List<Movie>> getNowPlayingMovies() {
+        return nowPlayingMoviesLiveData;
+    }
+
+    /**
+     * Получить LiveData с картой жанров
+     */
+    public LiveData<Map<Integer, String>> getGenreMap() {
+        return genreMapLiveData;
+    }
+
+    /**
+     * Получить LiveData с сообщениями об ошибках
+     */
+    public LiveData<String> getErrorMessage() {
+        return errorMessageLiveData;
+    }
+
+    /**
+     * Получить LiveData с состоянием загрузки
+     */
+    public LiveData<Boolean> isLoading() {
+        return isLoadingLiveData;
     }
 }

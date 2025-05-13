@@ -10,12 +10,18 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.draker.recmaster.database.dao.AchievementDao;
+import com.draker.recmaster.database.dao.BookDao;
+import com.draker.recmaster.database.dao.GameDao;
 import com.draker.recmaster.database.dao.MovieDao;
+import com.draker.recmaster.database.dao.TvShowDao;
 import com.draker.recmaster.database.dao.UserAchievementDao;
 import com.draker.recmaster.database.dao.UserDao;
 import com.draker.recmaster.database.dao.WatchHistoryDao;
 import com.draker.recmaster.database.entity.AchievementEntity;
+import com.draker.recmaster.database.entity.BookEntity;
+import com.draker.recmaster.database.entity.GameEntity;
 import com.draker.recmaster.database.entity.MovieEntity;
+import com.draker.recmaster.database.entity.TvShowEntity;
 import com.draker.recmaster.database.entity.UserAchievementEntity;
 import com.draker.recmaster.database.entity.UserEntity;
 import com.draker.recmaster.database.entity.WatchHistoryEntity;
@@ -34,8 +40,11 @@ import java.util.concurrent.Executors;
         UserEntity.class,
         WatchHistoryEntity.class,
         AchievementEntity.class,
-        UserAchievementEntity.class
-}, version = 2, exportSchema = false)
+        UserAchievementEntity.class,
+        TvShowEntity.class,
+        BookEntity.class,
+        GameEntity.class
+}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     
     private static final String TAG = "AppDatabase";
@@ -55,6 +64,9 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract WatchHistoryDao watchHistoryDao();
     public abstract AchievementDao achievementDao();
     public abstract UserAchievementDao userAchievementDao();
+    public abstract TvShowDao tvShowDao();
+    public abstract BookDao bookDao();
+    public abstract GameDao gameDao();
     
     /**
      * Получение экземпляра базы данных

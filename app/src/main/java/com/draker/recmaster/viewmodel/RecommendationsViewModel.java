@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.draker.recmaster.R;
 import com.draker.recmaster.model.Movie;
@@ -36,7 +37,9 @@ public class RecommendationsViewModel extends AndroidViewModel {
         super(application);
         repository = MovieRepository.getInstance();
         repository.setLocalRepository(application); // Устанавливаем локальный репозиторий
-        movieViewModel = new MovieViewModel();
+        
+        // Создаем MovieViewModel напрямую, так как у нас есть Application
+        movieViewModel = new MovieViewModel(application);
         
         // Создание списка доступных настроений
         initMoods();
@@ -88,12 +91,14 @@ public class RecommendationsViewModel extends AndroidViewModel {
         RecommendationFilter filter = currentFilter.getValue();
         
         // Получаем все фильмы из разных источников
-        if (movieViewModel.getPopularMovies().getValue() != null) {
-            allMovies.addAll(movieViewModel.getPopularMovies().getValue());
+        List<Movie> popularMovies = movieViewModel.getPopularMovies().getValue();
+        if (popularMovies != null) {
+            allMovies.addAll(popularMovies);
         }
         
-        if (movieViewModel.getTopRatedMovies().getValue() != null) {
-            allMovies.addAll(movieViewModel.getTopRatedMovies().getValue());
+        List<Movie> topRatedMovies = movieViewModel.getTopRatedMovies().getValue();
+        if (topRatedMovies != null) {
+            allMovies.addAll(topRatedMovies);
         }
         
         // Применяем фильтры

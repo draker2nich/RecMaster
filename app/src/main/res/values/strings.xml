@@ -84,7 +84,7 @@
     <string name="movie_revenue">Сборы: $%s</string>
     <string name="movie_genres">Жанры: %s</string>
     <string name="see_all">Показать все</string>
-    <string name="search_hint">Поиск фильмов…</string>
+    <string name="search_hint">Поиск…</string>
     <string name="no_results">Ничего не найдено</string>
     <string name="error_loading_data">Ошибка загрузки данных</string>
     <string name="retry">Повторить</string>
@@ -110,6 +110,36 @@
     <string name="genre_thriller">Триллер</string>
     <string name="genre_war">Военный</string>
     <string name="genre_western">Вестерн</string>
+    
+    <!-- TV Shows -->
+    <string name="poster_description">Постер</string>
+    <string name="popular_tv_shows">Популярные сериалы</string>
+    <string name="top_rated_tv_shows">Сериалы с высоким рейтингом</string>
+    <string name="on_the_air_tv_shows">Сейчас в эфире</string>
+    <string name="airing_today_tv_shows">Выходят сегодня</string>
+    <string name="tv_show_details">Детали сериала</string>
+    <string name="seasons_info">%d сезонов, %d эпизодов</string>
+    <string name="rating_format">%.1f</string>
+    
+    <!-- Books -->
+    <string name="book_cover_description">Обложка книги</string>
+    <string name="popular_books">Популярные книги</string>
+    <string name="search_books">Поиск книг</string>
+    <string name="by_author">Автор: %s</string>
+    <string name="page_count_format">%d стр.</string>
+    <string name="books_by_category">Книги по категории</string>
+    <string name="books_by_author">Книги автора</string>
+    <string name="new_releases_books">Новинки книг</string>
+    
+    <!-- Games -->
+    <string name="game_cover_description">Обложка игры</string>
+    <string name="popular_games">Популярные игры</string>
+    <string name="upcoming_games">Ожидаемые игры</string>
+    <string name="search_games">Поиск игр</string>
+    <string name="by_developer">Разработчик: %s</string>
+    <string name="games_by_genre">Игры по жанру</string>
+    <string name="games_by_platform">Игры на платформе</string>
+    <string name="metacritic_format">%d</string>
     
     <!-- Watch History -->
     <string name="watch_history">История просмотров</string>

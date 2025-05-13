@@ -10,10 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.draker.recmaster.R;
+import com.draker.recmaster.adapter.ContentCollectionAdapter;
 import com.draker.recmaster.databinding.FragmentCollectionBinding;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -26,10 +26,7 @@ public class CollectionFragment extends Fragment {
     private static final String TAG = "CollectionFragment";
     private FragmentCollectionBinding binding;
     private TabLayoutMediator tabLayoutMediator;
-    
-    // Сохраняем ViewPager2 в качестве статической переменной, 
-    // чтобы не создавать новый экземпляр при повторном открытии фрагмента
-    private static CollectionPagerAdapter pagerAdapter;
+    private ContentCollectionAdapter pagerAdapter;
     
     @Nullable
     @Override
@@ -43,51 +40,56 @@ public class CollectionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated");
-        
-        // Используем упрощенный подход, отказываемся от ViewPager для начала
-        // и просто показываем фрагмент истории просмотров
-        if (savedInstanceState == null) {
-            getChildFragmentManager().beginTransaction()
-                .replace(R.id.viewPager, new WatchHistoryFragment())
-                .commitNow();
-        }
-        
-        // Настраиваем заголовок вкладки
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText(R.string.tab_movies));
+
+        setupViewPager();
+        setupTabLayout();
+    }
+    
+    /**
+     * Настройка ViewPager2 для навигации между типами контента
+     */
+    private void setupViewPager() {
+        // Создаем адаптер для ViewPager2
+        pagerAdapter = new ContentCollectionAdapter(this);
+        binding.viewPager.setAdapter(pagerAdapter);
+        // Отключаем свайп между страницами (опционально)
+        // binding.viewPager.setUserInputEnabled(false);
+    }
+    
+    /**
+     * Настройка TabLayout и связывание его с ViewPager2
+     */
+    private void setupTabLayout() {
+        // Создаем медиатор для связи TabLayout и ViewPager2
+        tabLayoutMediator = new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText(R.string.tab_movies);
+                    break;
+                case 1:
+                    tab.setText(R.string.tab_tv_shows);
+                    break;
+                case 2:
+                    tab.setText(R.string.tab_books);
+                    break;
+                case 3:
+                    tab.setText(R.string.tab_games);
+                    break;
+            }
+        });
+        // Применяем конфигурацию медиатора
+        tabLayoutMediator.attach();
     }
     
     @Override
     public void onDestroyView() {
         Log.d(TAG, "onDestroyView");
+        if (tabLayoutMediator != null) {
+            tabLayoutMediator.detach();
+        }
+        binding.viewPager.setAdapter(null);
         super.onDestroyView();
         binding = null;
-    }
-    
-    // Упрощенная версия для тестирования
-    public static class CollectionPagerAdapter extends FragmentStateAdapter {
-        private static final int NUM_PAGES = 1;
-        
-        public CollectionPagerAdapter(FragmentActivity fa) {
-            super(fa);
-            Log.d(TAG, "CollectionPagerAdapter created");
-        }
-        
-        public CollectionPagerAdapter(Fragment fragment) {
-            super(fragment);
-            Log.d(TAG, "CollectionPagerAdapter created from fragment");
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            Log.d(TAG, "createFragment at position: " + position);
-            return new WatchHistoryFragment();
-        }
-
-        @Override
-        public int getItemCount() {
-            return NUM_PAGES;
-        }
     }
     
     /**

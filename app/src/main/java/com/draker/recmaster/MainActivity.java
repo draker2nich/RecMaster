@@ -1,6 +1,5 @@
 package com.draker.recmaster;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,18 +20,13 @@ import com.draker.recmaster.ui.collection.CollectionFragment;
 import com.draker.recmaster.ui.home.HomeFragment;
 import com.draker.recmaster.ui.profile.ProfileFragment;
 import com.draker.recmaster.ui.recommendations.RecommendationsFragment;
-import com.draker.recmaster.util.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static HomeFragment homeFragment;
-    private static RecommendationsFragment recommendationsFragment;
-    private static CollectionFragment collectionFragment;
-    private static AchievementsFragment achievementsFragment;
-    private static ProfileFragment profileFragment;
+    private BottomNavigationView bottomNavigationView;
     private UserPreferences userPreferences;
     private GamificationService gamificationService;
 
@@ -58,37 +52,8 @@ public class MainActivity extends AppCompatActivity {
         // Инициализируем сервис геймификации
         gamificationService = GamificationService.getInstance(this);
         
-        // Инициализируем фрагменты
-        if (homeFragment == null) {
-            homeFragment = new HomeFragment();
-        }
-        
-        if (recommendationsFragment == null) {
-            recommendationsFragment = new RecommendationsFragment();
-        }
-        
-        if (collectionFragment == null) {
-            collectionFragment = new CollectionFragment();
-        }
-        
-        if (achievementsFragment == null) {
-            achievementsFragment = new AchievementsFragment();
-        }
-        
-        if (profileFragment == null) {
-            profileFragment = new ProfileFragment();
-        }
-        
-        // Проверяем, был ли запущен через уведомление о достижении
-        if (getIntent() != null && getIntent().getBooleanExtra("OPEN_ACHIEVEMENTS", false)) {
-            setFragment(achievementsFragment);
-        } else {
-            // По умолчанию показываем домашний фрагмент
-            setFragment(homeFragment);
-        }
-        
         // Инициализируем BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
+        bottomNavigationView = findViewById(R.id.bottom_nav_view);
         
         // Настраиваем обработчик нажатий на элементы меню
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -99,23 +64,23 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (itemId == R.id.navigation_home) {
                         Log.d(TAG, "Выбрана вкладка Home");
-                        setFragment(homeFragment);
+                        loadFragment(new HomeFragment());
                         return true;
                     } else if (itemId == R.id.navigation_recommendations) {
                         Log.d(TAG, "Выбрана вкладка Recommendations");
-                        setFragment(recommendationsFragment);
+                        loadFragment(new RecommendationsFragment());
                         return true;
                     } else if (itemId == R.id.navigation_collection) {
                         Log.d(TAG, "Выбрана вкладка Collection");
-                        setFragment(collectionFragment);
+                        loadFragment(new CollectionFragment());
                         return true;
                     } else if (itemId == R.id.navigation_achievements) {
                         Log.d(TAG, "Выбрана вкладка Achievements");
-                        setFragment(achievementsFragment);
+                        loadFragment(new AchievementsFragment());
                         return true;
                     } else if (itemId == R.id.navigation_profile) {
                         Log.d(TAG, "Выбрана вкладка Profile");
-                        setFragment(profileFragment);
+                        loadFragment(new ProfileFragment());
                         return true;
                     }
                 } catch (Exception e) {
@@ -126,32 +91,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        // Устанавливаем выбранный пункт меню, если открыты достижения через уведомление
+        // Проверяем, был ли запущен через уведомление о достижении
         if (getIntent() != null && getIntent().getBooleanExtra("OPEN_ACHIEVEMENTS", false)) {
             bottomNavigationView.setSelectedItemId(R.id.navigation_achievements);
+        } else {
+            // По умолчанию показываем домашний фрагмент
+            loadFragment(new HomeFragment());
         }
     }
     
-    // Метод для установки текущего фрагмента с сохранением состояния
-    private void setFragment(Fragment fragment) {
-        String fragmentName = fragment.getClass().getSimpleName();
-        Log.d("MainActivity", "Переключаемся на фрагмент: " + fragmentName);
+    /**
+     * Загружает фрагмент в контейнер, заменяя текущий
+     */
+    private void loadFragment(Fragment fragment) {
+        String fragmentTag = fragment.getClass().getSimpleName();
+        Log.d(TAG, "Loading fragment: " + fragmentTag);
         
-        // Проверяем, нужно ли добавлять новый экземпляр фрагмента
+        // Проверяем, не является ли уже отображаемый фрагмент тем же самым типом
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) {
-            Log.d("MainActivity", "Фрагмент того же типа уже активен");
+        if (currentFragment != null && currentFragment.getClass().getName().equals(fragment.getClass().getName())) {
+            Log.d(TAG, "This fragment is already shown: " + fragmentTag);
             return;
         }
         
-        // Используем фрагмент-менеджер для транзакции
+        // Создаем транзакцию и заменяем текущий фрагмент
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        
-        // Сохраняем фрагменты в стеке, чтобы они не пересоздавались
-        transaction.replace(R.id.fragment_container, fragment, fragmentName);
-        
-        // Применяем транзакцию без ожидания возобновления жизненного цикла
-        transaction.commitNowAllowingStateLoss();
+        transaction.replace(R.id.fragment_container, fragment, fragmentTag);
+        transaction.commitNow(); // Используем commitNow для немедленного применения
     }
     
     private void initRepositories() {

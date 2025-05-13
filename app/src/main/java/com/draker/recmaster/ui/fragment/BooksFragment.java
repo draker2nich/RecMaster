@@ -1,0 +1,101 @@
+package com.draker.recmaster.ui.fragment;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.draker.recmaster.R;
+import com.draker.recmaster.adapter.BookAdapter;
+import com.draker.recmaster.model.Book;
+import com.draker.recmaster.viewmodel.BookViewModel;
+
+/**
+ * Фрагмент для отображения книг
+ */
+public class BooksFragment extends Fragment implements BookAdapter.OnBookClickListener {
+
+    private BookViewModel viewModel;
+    private BookAdapter adapter;
+    private RecyclerView recyclerView;
+    private View loadingView;
+    private View errorView;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_books, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        recyclerView = view.findViewById(R.id.recycler_view_books);
+        loadingView = view.findViewById(R.id.loading_view);
+        errorView = view.findViewById(R.id.error_view);
+
+        // Настройка RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new BookAdapter(requireContext(), this);
+        recyclerView.setAdapter(adapter);
+
+        // Настройка ViewModel
+        viewModel = new ViewModelProvider(this).get(BookViewModel.class);
+        
+        // Наблюдение за данными
+        viewModel.getBooksLiveData().observe(getViewLifecycleOwner(), books -> {
+            adapter.setBooks(books);
+            recyclerView.setVisibility(View.VISIBLE);
+        });
+
+        viewModel.getErrorLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                showError(errorMessage);
+            }
+        });
+
+        viewModel.getIsLoadingLiveData().observe(getViewLifecycleOwner(), isLoading -> {
+            loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            if (isLoading) {
+                recyclerView.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
+            }
+        });
+
+        // Загрузка данных
+        loadData();
+    }
+
+    /**
+     * Загрузка данных о книгах
+     */
+    private void loadData() {
+        // Поиск по умолчанию - популярные книги
+        viewModel.searchBooks("subject:fiction", 0);
+    }
+
+    /**
+     * Отображение ошибки
+     */
+    private void showError(String errorMessage) {
+        errorView.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBookClick(Book book) {
+        // Открытие детальной информации о книге
+        // TODO: Реализовать переход на экран деталей книги
+        Toast.makeText(requireContext(), "Выбрана книга: " + book.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+}
