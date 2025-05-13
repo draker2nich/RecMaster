@@ -1,6 +1,5 @@
 package com.draker.recmaster.model;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -28,6 +27,7 @@ public class Movie implements Serializable {
     private List<Integer> genreIds;
     private float popularity;
     private boolean adult;
+    private int runtime; // продолжительность фильма в минутах
 
     // Базовый URL для изображений
     private static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p/w342";
@@ -114,7 +114,7 @@ public class Movie implements Serializable {
      * Возвращает отформатированную дату релиза в локализованном формате
      */
     public String getFormattedReleaseDate() {
-        if (TextUtils.isEmpty(releaseDate)) {
+        if (releaseDate == null || releaseDate.isEmpty()) {
             return "";
         }
         
@@ -160,6 +160,32 @@ public class Movie implements Serializable {
         this.adult = adult;
     }
     
+    public int getRuntime() {
+        return runtime;
+    }
+    
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+    
+    /**
+     * Возвращает отформатированную строку времени в формате "2ч 15м"
+     */
+    public String getFormattedRuntime() {
+        if (runtime <= 0) {
+            return "";
+        }
+        
+        int hours = runtime / 60;
+        int minutes = runtime % 60;
+        
+        if (hours > 0) {
+            return hours + "ч " + minutes + "м";
+        } else {
+            return minutes + "м";
+        }
+    }
+    
     /**
      * Получает строковое представление жанров фильма
      */
@@ -190,7 +216,7 @@ public class Movie implements Serializable {
         // могла бы быть более сложная логика определения настроения
         // на основе жанров, описания и т.д.
         
-        if (TextUtils.isEmpty(mood)) {
+        if (mood == null || mood.isEmpty()) {
             return true;
         }
         
@@ -199,18 +225,81 @@ public class Movie implements Serializable {
         }
         
         // Примерное соответствие жанров настроениям
-        switch (mood.toLowerCase()) {
-            case "happy":
-                return genreIds.contains(35) || genreIds.contains(10751); // Comedy, Family
-            case "sad":
-                return genreIds.contains(18); // Drama
-            case "excited":
-                return genreIds.contains(28) || genreIds.contains(12) || genreIds.contains(878); // Action, Adventure, Science Fiction
-            case "relaxed":
-                return genreIds.contains(99) || genreIds.contains(36); // Documentary, History
-            default:
-                return true;
+        if (mood.equalsIgnoreCase("happy")) {
+            return genreIds.contains(35) || genreIds.contains(10751); // Comedy, Family
+        } else if (mood.equalsIgnoreCase("sad")) {
+            return genreIds.contains(18); // Drama 
+        } else if (mood.equalsIgnoreCase("excited")) {
+            return genreIds.contains(28) || genreIds.contains(12) || genreIds.contains(878); // Action, Adventure, Science Fiction
+        } else if (mood.equalsIgnoreCase("relaxed")) {
+            return genreIds.contains(99) || genreIds.contains(36); // Documentary, History
+        } else {
+            return true;
         }
+    }
+    
+    /**
+     * Определяет, соответствует ли фильм определенному диапазону времени
+     * @param maxMinutes максимальная длительность в минутах
+     * @return true, если фильм укладывается в указанное время
+     */
+    public boolean matchesDuration(int maxMinutes) {
+        // Если продолжительность не указана или задана нулевая,
+        // то считаем фильм подходящим по любому временному критерию
+        if (runtime <= 0 || maxMinutes <= 0) {
+            return true;
+        }
+        
+        return runtime <= maxMinutes;
+    }
+
+    /**
+     * Проверяет, содержит ли фильм указанный жанр
+     * @param genreId ID жанра
+     * @return true, если фильм принадлежит указанному жанру
+     */
+    public boolean hasGenre(int genreId) {
+        return genreIds != null && genreIds.contains(genreId);
+    }
+    
+    /**
+     * Проверяет, соответствует ли фильм всем указанным жанрам
+     * @param selectedGenreIds список ID выбранных жанров
+     * @return true, если фильм содержит все указанные жанры
+     */
+    public boolean matchesAllGenres(List<Integer> selectedGenreIds) {
+        if (selectedGenreIds == null || selectedGenreIds.isEmpty()) {
+            return true;
+        }
+        
+        if (genreIds == null || genreIds.isEmpty()) {
+            return false;
+        }
+        
+        return genreIds.containsAll(selectedGenreIds);
+    }
+    
+    /**
+     * Проверяет, соответствует ли фильм хотя бы одному из указанных жанров
+     * @param selectedGenreIds список ID выбранных жанров
+     * @return true, если фильм содержит хотя бы один из указанных жанров
+     */
+    public boolean matchesAnyGenre(List<Integer> selectedGenreIds) {
+        if (selectedGenreIds == null || selectedGenreIds.isEmpty()) {
+            return true;
+        }
+        
+        if (genreIds == null || genreIds.isEmpty()) {
+            return false;
+        }
+        
+        for (Integer genreId : selectedGenreIds) {
+            if (genreIds.contains(genreId)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     @Override

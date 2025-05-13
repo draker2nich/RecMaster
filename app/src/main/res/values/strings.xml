@@ -18,6 +18,18 @@
     <string name="mood_sad">Грустное</string>
     <string name="mood_excited">Возбужденное</string>
     <string name="mood_relaxed">Расслабленное</string>
+    <string name="mood_icon">Иконка настроения</string>
+    
+    <!-- Recommendations -->
+    <string name="select_duration">Выберите продолжительность:</string>
+    <string name="duration_any">Любая</string>
+    <string name="duration_short">До 1.5 часа</string>
+    <string name="duration_medium">До 2 часов</string>
+    <string name="duration_long">До 3 часов</string>
+    <string name="select_genres">Выберите жанры:</string>
+    <string name="select">Выбрать</string>
+    <string name="no_recommendations">Нет подходящих рекомендаций.\nПопробуйте изменить фильтры.</string>
+    <string name="reset_filters">Сбросить фильтры</string>
     
     <!-- Profile -->
     <string name="profile_image">Фото профиля</string>
@@ -54,7 +66,6 @@
     <string name="experience">Опыт</string>
     <string name="preferred_genres">Предпочитаемые жанры</string>
     <string name="preferred_genres_description">Выберите жанры, которые вам нравятся</string>
-    <string name="select_genres">Выбрать жанры</string>
     <string name="changes_saved">Изменения сохранены</string>
     
     <!-- Movies -->
