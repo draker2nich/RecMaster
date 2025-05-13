@@ -98,4 +98,17 @@
     <string name="genre_thriller">Триллер</string>
     <string name="genre_war">Военный</string>
     <string name="genre_western">Вестерн</string>
+    
+    <!-- Watch History -->
+    <string name="watch_history">История просмотров</string>
+    <string name="no_watch_history">Вы еще не отметили ни одного просмотренного фильма</string>
+    <string name="watched">Просмотрено</string>
+    <string name="watched_on">Просмотрено: %s</string>
+    <string name="mark_as_watched">Отметить как просмотренное</string>
+    <string name="your_rating">Ваша оценка</string>
+    <string name="your_notes">Ваши заметки (опционально)</string>
+    <string name="save_rating">Сохранить</string>
+    <string name="rating_saved">Оценка сохранена</string>
+    <string name="must_login">Необходимо войти в систему для отметки просмотренных фильмов</string>
+    <string name="unknown_genre">Жанр неизвестен</string>
 </resources>

@@ -128,4 +128,12 @@ public class UserPreferences {
             saveUser(user);
         }
     }
+    
+    /**
+     * Получить имя пользователя текущего активного аккаунта
+     */
+    public String getUsername() {
+        User user = loadUser();
+        return user != null ? user.getUsername() : "";
+    }
 }

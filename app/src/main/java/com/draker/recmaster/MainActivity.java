@@ -1,7 +1,9 @@
 package com.draker.recmaster;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.draker.recmaster.data.UserPreferences;
+import com.draker.recmaster.database.repository.LocalMovieRepository;
+import com.draker.recmaster.repository.MovieRepository;
 import com.draker.recmaster.ui.auth.LoginActivity;
 import com.draker.recmaster.ui.collection.CollectionFragment;
 import com.draker.recmaster.ui.home.HomeFragment;
@@ -20,10 +24,11 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private HomeFragment homeFragment;
-    private RecommendationsFragment recommendationsFragment;
-    private CollectionFragment collectionFragment;
-    private ProfileFragment profileFragment;
+    private static final String TAG = "MainActivity";
+    private static HomeFragment homeFragment;
+    private static RecommendationsFragment recommendationsFragment;
+    private static CollectionFragment collectionFragment;
+    private static ProfileFragment profileFragment;
     private UserPreferences userPreferences;
 
     @Override
@@ -42,11 +47,25 @@ public class MainActivity extends AppCompatActivity {
         
         setContentView(R.layout.activity_main);
         
+        // Инициализируем репозитории и настраиваем доступ к базе данных
+        initRepositories();
+        
         // Инициализируем фрагменты
-        homeFragment = new HomeFragment();
-        recommendationsFragment = new RecommendationsFragment();
-        collectionFragment = new CollectionFragment();
-        profileFragment = new ProfileFragment();
+        if (homeFragment == null) {
+            homeFragment = new HomeFragment();
+        }
+        
+        if (recommendationsFragment == null) {
+            recommendationsFragment = new RecommendationsFragment();
+        }
+        
+        if (collectionFragment == null) {
+            collectionFragment = new CollectionFragment();
+        }
+        
+        if (profileFragment == null) {
+            profileFragment = new ProfileFragment();
+        }
         
         // По умолчанию показываем домашний фрагмент
         setFragment(homeFragment);
@@ -60,18 +79,26 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 
-                if (itemId == R.id.navigation_home) {
-                    setFragment(homeFragment);
-                    return true;
-                } else if (itemId == R.id.navigation_recommendations) {
-                    setFragment(recommendationsFragment);
-                    return true;
-                } else if (itemId == R.id.navigation_collection) {
-                    setFragment(collectionFragment);
-                    return true;
-                } else if (itemId == R.id.navigation_profile) {
-                    setFragment(profileFragment);
-                    return true;
+                try {
+                    if (itemId == R.id.navigation_home) {
+                        Log.d(TAG, "Выбрана вкладка Home");
+                        setFragment(homeFragment);
+                        return true;
+                    } else if (itemId == R.id.navigation_recommendations) {
+                        Log.d(TAG, "Выбрана вкладка Recommendations");
+                        setFragment(recommendationsFragment);
+                        return true;
+                    } else if (itemId == R.id.navigation_collection) {
+                        Log.d(TAG, "Выбрана вкладка Collection");
+                        setFragment(collectionFragment);
+                        return true;
+                    } else if (itemId == R.id.navigation_profile) {
+                        Log.d(TAG, "Выбрана вкладка Profile");
+                        setFragment(profileFragment);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при переключении вкладки", e);
                 }
                 
                 return false;
@@ -79,10 +106,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
-    // Метод для установки текущего фрагмента
+    // Метод для установки текущего фрагмента с сохранением состояния
     private void setFragment(Fragment fragment) {
+        String fragmentName = fragment.getClass().getSimpleName();
+        Log.d("MainActivity", "Переключаемся на фрагмент: " + fragmentName);
+        
+        // Проверяем, нужно ли добавлять новый экземпляр фрагмента
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) {
+            Log.d("MainActivity", "Фрагмент того же типа уже активен");
+            return;
+        }
+        
+        // Используем фрагмент-менеджер для транзакции
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
+        
+        // Сохраняем фрагменты в стеке, чтобы они не пересоздавались
+        transaction.replace(R.id.fragment_container, fragment, fragmentName);
+        
+        // Применяем транзакцию без ожидания возобновления жизненного цикла
+        transaction.commitNowAllowingStateLoss();
+    }
+    
+    private void initRepositories() {
+        // Устанавливаем связь между сетевым и локальным репозиториями
+        MovieRepository movieRepository = MovieRepository.getInstance();
+        movieRepository.setLocalRepository(getApplication());
+        
+        // Инициализируем локальный репозиторий
+        LocalMovieRepository.getInstance(getApplication());
+        
+        Log.d("MainActivity", "Repositories initialized");
     }
 }

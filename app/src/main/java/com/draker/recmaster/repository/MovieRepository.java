@@ -1,5 +1,6 @@
 package com.draker.recmaster.repository;
 
+import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -7,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.draker.recmaster.BuildConfig;
 import com.draker.recmaster.api.ApiClient;
 import com.draker.recmaster.api.TmdbApi;
+import com.draker.recmaster.database.repository.LocalMovieRepository;
 import com.draker.recmaster.model.Genre;
 import com.draker.recmaster.model.GenreResponse;
 import com.draker.recmaster.model.Movie;
@@ -30,6 +32,7 @@ public class MovieRepository {
 
     private final TmdbApi tmdbApi;
     private static MovieRepository instance;
+    private LocalMovieRepository localMovieRepository;
     
     // Кэш жанров для быстрого доступа
     private final Map<Integer, String> genreMap = new HashMap<>();
@@ -44,6 +47,15 @@ public class MovieRepository {
             instance = new MovieRepository();
         }
         return instance;
+    }
+    
+    /**
+     * Устанавливает экземпляр LocalMovieRepository для сохранения данных в базу
+     */
+    public void setLocalRepository(Application application) {
+        if (localMovieRepository == null) {
+            localMovieRepository = LocalMovieRepository.getInstance(application);
+        }
     }
 
     /**
@@ -61,6 +73,11 @@ public class MovieRepository {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Got " + movies.size() + " popular movies");
                     moviesLiveData.setValue(movies);
+                    
+                    // Сохраняем полученные фильмы в локальную базу данных
+                    if (localMovieRepository != null) {
+                        localMovieRepository.insertMovies(localMovieRepository.moviesToEntities(movies));
+                    }
                 } else {
                     String errorMsg = "Ошибка загрузки данных: " + response.code();
                     Log.e(TAG, errorMsg);
@@ -103,6 +120,11 @@ public class MovieRepository {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Got " + movies.size() + " top rated movies");
                     moviesLiveData.setValue(movies);
+                    
+                    // Сохраняем полученные фильмы в локальную базу данных
+                    if (localMovieRepository != null) {
+                        localMovieRepository.insertMovies(localMovieRepository.moviesToEntities(movies));
+                    }
                 } else {
                     String errorMsg = "Ошибка загрузки данных: " + response.code();
                     Log.e(TAG, errorMsg);
@@ -144,6 +166,11 @@ public class MovieRepository {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Got " + movies.size() + " now playing movies");
                     moviesLiveData.setValue(movies);
+                    
+                    // Сохраняем полученные фильмы в локальную базу данных
+                    if (localMovieRepository != null) {
+                        localMovieRepository.insertMovies(localMovieRepository.moviesToEntities(movies));
+                    }
                 } else {
                     String errorMsg = "Ошибка загрузки данных: " + response.code();
                     Log.e(TAG, errorMsg);
@@ -185,6 +212,11 @@ public class MovieRepository {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Got " + movies.size() + " upcoming movies");
                     moviesLiveData.setValue(movies);
+                    
+                    // Сохраняем полученные фильмы в локальную базу данных
+                    if (localMovieRepository != null) {
+                        localMovieRepository.insertMovies(localMovieRepository.moviesToEntities(movies));
+                    }
                 } else {
                     String errorMsg = "Ошибка загрузки данных: " + response.code();
                     Log.e(TAG, errorMsg);
@@ -277,6 +309,11 @@ public class MovieRepository {
                     List<Movie> movies = response.body().getResults();
                     Log.d(TAG, "Found " + movies.size() + " movies for query: " + query);
                     moviesLiveData.setValue(movies);
+                    
+                    // Сохраняем найденные фильмы в локальную базу данных
+                    if (localMovieRepository != null) {
+                        localMovieRepository.insertMovies(localMovieRepository.moviesToEntities(movies));
+                    }
                 } else {
                     String errorMsg = "Ошибка поиска: " + response.code();
                     Log.e(TAG, errorMsg);

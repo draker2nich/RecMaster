@@ -23,11 +23,13 @@ import com.draker.recmaster.adapter.MovieAdapter;
 import com.draker.recmaster.model.Movie;
 import com.draker.recmaster.util.NetworkUtil;
 import com.draker.recmaster.viewmodel.MovieViewModel;
+import com.draker.recmaster.viewmodel.WatchHistoryViewModel;
 
 public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
 
     private static final String TAG = "HomeFragment";
     private MovieViewModel movieViewModel;
+    private WatchHistoryViewModel watchHistoryViewModel;
     private MovieAdapter popularAdapter;
     private MovieAdapter topRatedAdapter;
     private MovieAdapter upcomingAdapter;
@@ -60,6 +62,10 @@ public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickL
 
         // Инициализация ViewModel
         movieViewModel = new ViewModelProvider(requireActivity()).get(MovieViewModel.class);
+        
+        // Инициализация WatchHistoryViewModel
+        watchHistoryViewModel = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())
+                .create(WatchHistoryViewModel.class);
 
         // Настройка observers
         observeViewModel();
@@ -114,6 +120,11 @@ public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickL
         popularAdapter = new MovieAdapter(requireContext(), this);
         topRatedAdapter = new MovieAdapter(requireContext(), this);
         upcomingAdapter = new MovieAdapter(requireContext(), this);
+        
+        // Устанавливаем WatchHistoryViewModel для адаптеров
+        popularAdapter.setWatchHistoryViewModel(watchHistoryViewModel);
+        topRatedAdapter.setWatchHistoryViewModel(watchHistoryViewModel);
+        upcomingAdapter.setWatchHistoryViewModel(watchHistoryViewModel);
 
         // Настройка RecyclerViews
         recyclerPopularMovies.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));

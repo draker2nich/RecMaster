@@ -72,6 +72,11 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
     
+    // Room для локальной базы данных
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1") 
+    implementation("androidx.room:room-ktx:2.6.1") // Опционально для корутин
+    
     // Корутины для асинхронных операций
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
