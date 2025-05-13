@@ -17,4 +17,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="point_color">#FFC107</color>
     <color name="rating_color">#FFC107</color>
+    
+    <!-- Цвета для геймификации -->
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="colorAchievementUnlocked">#4CAF50</color>
+    <color name="colorAchievementLocked">#9E9E9E</color>
 </resources>

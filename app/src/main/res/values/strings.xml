@@ -7,6 +7,7 @@
     <string name="title_recommendations">Рекомендации</string>
     <string name="title_profile">Профиль</string>
     <string name="title_collection">Коллекция</string>
+    <string name="title_achievements">Достижения</string>
 
     <!-- Content Card -->
     <string name="content_image">Изображение контента</string>
@@ -122,4 +123,10 @@
     <string name="rating_saved">Оценка сохранена</string>
     <string name="must_login">Необходимо войти в систему для отметки просмотренных фильмов</string>
     <string name="unknown_genre">Жанр неизвестен</string>
+    
+    <!-- Achievements -->
+    <string name="achievement_unlocked">Достижение разблокировано!</string>
+    <string name="next_level" formatted="false">Еще %d XP до уровня %d</string>
+    <string name="points_reward">+%d XP</string>
+    <string name="achievement_progress" formatted="false">%d/%d</string>
 </resources>

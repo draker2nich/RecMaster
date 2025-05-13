@@ -22,6 +22,12 @@
         android:name="com.draker.recmaster.ui.collection.CollectionFragment"
         android:label="@string/title_collection"
         tools:layout="@layout/fragment_collection" />
+        
+    <fragment
+        android:id="@+id/navigation_achievements"
+        android:name="com.draker.recmaster.ui.achievements.AchievementsFragment"
+        android:label="@string/title_achievements"
+        tools:layout="@layout/fragment_achievements" />
 
     <fragment
         android:id="@+id/navigation_profile"

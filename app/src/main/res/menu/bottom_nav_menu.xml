@@ -14,6 +14,11 @@
         android:id="@+id/navigation_collection"
         android:icon="@android:drawable/ic_menu_gallery"
         android:title="@string/title_collection" />
+        
+    <item
+        android:id="@+id/navigation_achievements"
+        android:icon="@android:drawable/ic_menu_slideshow"
+        android:title="@string/title_achievements" />
 
     <item
         android:id="@+id/navigation_profile"

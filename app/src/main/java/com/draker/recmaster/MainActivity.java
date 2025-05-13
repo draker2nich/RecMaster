@@ -14,11 +14,14 @@ import androidx.fragment.app.FragmentTransaction;
 import com.draker.recmaster.data.UserPreferences;
 import com.draker.recmaster.database.repository.LocalMovieRepository;
 import com.draker.recmaster.repository.MovieRepository;
+import com.draker.recmaster.service.GamificationService;
+import com.draker.recmaster.ui.achievements.AchievementsFragment;
 import com.draker.recmaster.ui.auth.LoginActivity;
 import com.draker.recmaster.ui.collection.CollectionFragment;
 import com.draker.recmaster.ui.home.HomeFragment;
 import com.draker.recmaster.ui.profile.ProfileFragment;
 import com.draker.recmaster.ui.recommendations.RecommendationsFragment;
+import com.draker.recmaster.util.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -28,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private static HomeFragment homeFragment;
     private static RecommendationsFragment recommendationsFragment;
     private static CollectionFragment collectionFragment;
+    private static AchievementsFragment achievementsFragment;
     private static ProfileFragment profileFragment;
     private UserPreferences userPreferences;
+    private GamificationService gamificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         // Инициализируем репозитории и настраиваем доступ к базе данных
         initRepositories();
         
+        // Инициализируем сервис геймификации
+        gamificationService = GamificationService.getInstance(this);
+        
         // Инициализируем фрагменты
         if (homeFragment == null) {
             homeFragment = new HomeFragment();
@@ -63,12 +71,21 @@ public class MainActivity extends AppCompatActivity {
             collectionFragment = new CollectionFragment();
         }
         
+        if (achievementsFragment == null) {
+            achievementsFragment = new AchievementsFragment();
+        }
+        
         if (profileFragment == null) {
             profileFragment = new ProfileFragment();
         }
         
-        // По умолчанию показываем домашний фрагмент
-        setFragment(homeFragment);
+        // Проверяем, был ли запущен через уведомление о достижении
+        if (getIntent() != null && getIntent().getBooleanExtra("OPEN_ACHIEVEMENTS", false)) {
+            setFragment(achievementsFragment);
+        } else {
+            // По умолчанию показываем домашний фрагмент
+            setFragment(homeFragment);
+        }
         
         // Инициализируем BottomNavigationView
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
@@ -92,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "Выбрана вкладка Collection");
                         setFragment(collectionFragment);
                         return true;
+                    } else if (itemId == R.id.navigation_achievements) {
+                        Log.d(TAG, "Выбрана вкладка Achievements");
+                        setFragment(achievementsFragment);
+                        return true;
                     } else if (itemId == R.id.navigation_profile) {
                         Log.d(TAG, "Выбрана вкладка Profile");
                         setFragment(profileFragment);
@@ -104,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        
+        // Устанавливаем выбранный пункт меню, если открыты достижения через уведомление
+        if (getIntent() != null && getIntent().getBooleanExtra("OPEN_ACHIEVEMENTS", false)) {
+            bottomNavigationView.setSelectedItemId(R.id.navigation_achievements);
+        }
     }
     
     // Метод для установки текущего фрагмента с сохранением состояния
